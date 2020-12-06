@@ -23,7 +23,7 @@ def main():
         print('2 - All Packet Content')
         print('3 - All TCP Packets')
         print('4 - All UDP Packets')
-        print('5 - HTTP Analysis')
+        print('5 - TCP Analysis')
         print('6 - IP Analysis')
         print('0 - Break')
         menu = int(input('Selection: '))
@@ -41,7 +41,7 @@ def main():
         elif(menu == 4):
             udp_packet(packet_list)
         elif(menu == 5):
-            http_analysis(packet_list)
+            tcp_analysis(packet_list)
         elif(menu == 6):
             ip_analysis(packet_list)
         else:
@@ -66,7 +66,7 @@ def udp_packet(packet_list):
         if packet_list[i].haslayer(UDP):
             packet_list[i].show()
 
-def http_analysis(packet_list):
+def tcp_analysis(packet_list):
     rcv = 0
     snt = 0
     https_sent = 0
@@ -78,8 +78,6 @@ def http_analysis(packet_list):
     
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(TCP):
-            connection_src.append(packet_list[i][IP].src)
-            connection_dst.append(packet_list[i][IP].dst)
             if ((packet_list[i].dport == 'https') or (packet_list[i].dport == 443)):
                 snt += 1
                 https_sent += 1
@@ -126,6 +124,7 @@ def ip_analysis(packet_list):
     connection_dst = []
     flag_dst = []
     target_ip = input('Type the target IP for a better analysis: ')
+    mostly_updloader = []
 
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(TCP):
@@ -167,7 +166,14 @@ def ip_analysis(packet_list):
                 elif packet_list[j][IP].dst == connection_array[i]:
                     flagdst += 1
         print('-------------------------------------------------------------------')
-        print('[*] The IP %s uploaded %i and downloaded %i packets!!!' %(connection_array[i], flagsrc, flagdst))  
-            
+        print('[*] The IP %s uploaded %i and downloaded %i packets!!!' %(connection_array[i], flagsrc, flagdst)) 
+        if(flagsrc > flagdst):
+            mostly_updloader.append(connection_array[i]) 
+    print('-------------------------------------------------------------------')
+    print('[*] There are %i IPs that upload more than download!!!' %len(mostly_updloader))
+    print('[*] These are those IPs: ')
+    for i in range(len(mostly_updloader)):
+        print(mostly_updloader[i])   
+    print('-------------------------------------------------------------------') 
 
 main()
