@@ -24,7 +24,8 @@ def main():
         print('3 - All TCP Packets')
         print('4 - All UDP Packets')
         print('5 - HTTP Analysis')
-        print('0 - to Break')
+        print('6 - IP Analysis')
+        print('0 - Break')
         menu = int(input('Selection: '))
         if(menu == 1):
             espec_packet(packet_list)
@@ -41,6 +42,8 @@ def main():
             udp_packet(packet_list)
         elif(menu == 5):
             http_analysis(packet_list)
+        elif(menu == 6):
+            ip_analysis(packet_list)
         else:
             break
     
@@ -72,8 +75,11 @@ def http_analysis(packet_list):
     https_rcv = 0
     http_rcv = 0
     ftp_rcv = 0
+    
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(TCP):
+            connection_src.append(packet_list[i][IP].src)
+            connection_dst.append(packet_list[i][IP].dst)
             if ((packet_list[i].dport == 'https') or (packet_list[i].dport == 443)):
                 snt += 1
                 https_sent += 1
@@ -92,6 +98,7 @@ def http_analysis(packet_list):
             elif ((packet_list[i].sport == 21)):
                 rcv += 1
                 ftp_rcv += 1
+
     if (rcv > snt):
         print('-------------------------------------------------------------------')
         print('[*] There was %d packets sent!' %snt)
@@ -112,6 +119,55 @@ def http_analysis(packet_list):
         print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))
         print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))
         print('-------------------------------------------------------------------')
+
+def ip_analysis(packet_list):
+    connection_src = []
+    flag_src = []
+    connection_dst = []
+    flag_dst = []
+    target_ip = input('Type the target IP for a better analysis: ')
+
+    for i in range(len(packet_list)):
+        if packet_list[i].haslayer(TCP):
+            connection_src.append(packet_list[i][IP].src)
+            connection_dst.append(packet_list[i][IP].dst)
+    connection_src = list(dict.fromkeys(connection_src))
+    connection_dst = list(dict.fromkeys(connection_dst))
+    try:
+        connection_src.remove(target_ip)
+    except:
+        print('[*] %s is not on the source list' %target_ip)
+    try:
+        connection_dst.remove(target_ip)
+    except:
+        print('[*] %s is not on the destination list' %target_ip)
+    x = len(connection_dst)
+    y = len(connection_src)
+
+    print('-------------------------------------------------------------------')
+    print('[*] There are %i source IPs!!!' %y)
+    print(connection_src)
+    print('-------------------------------------------------------------------')
+    print('[*] There are %i destination IPs!!!' %x)
+    print(connection_dst)
+    print('-------------------------------------------------------------------')
+
+    print('[*] Upload/Download analysis')
+    connection_array = connection_dst
+    for i in range(y):
+        connection_array.append(connection_src[i])
+    connection_array = list(dict.fromkeys(connection_array))
+    for i in range(len(connection_array)):
+        flagsrc = 0
+        flagdst = 0
+        for j in range(len(packet_list)):
+            if packet_list[j].haslayer(TCP):
+                if packet_list[j][IP].src == connection_array[i]:
+                    flagsrc += 1
+                elif packet_list[j][IP].dst == connection_array[i]:
+                    flagdst += 1
+        print('-------------------------------------------------------------------')
+        print('[*] The IP %s uploaded %i and downloaded %i packets!!!' %(connection_array[i], flagsrc, flagdst))  
             
 
 main()
