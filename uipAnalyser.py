@@ -1,5 +1,3 @@
-from struct import pack
-from scapy.all import rdpcap
 from scapy.all import *
 
 def uip_analysis(packet_list):

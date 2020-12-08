@@ -1,4 +1,3 @@
-from struct import pack
 from scapy.all import rdpcap
 from scapy.all import *
 from tcpAnalyser import tcp_analysis
@@ -76,9 +75,5 @@ def udp_packet(packet_list):
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(UDP):
             packet_list[i].show()
-
-
-
-
 
 main()

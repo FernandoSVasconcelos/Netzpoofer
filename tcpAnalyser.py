@@ -1,5 +1,3 @@
-from struct import pack
-from scapy.all import rdpcap
 from scapy.all import *
 
 def tcp_analysis(packet_list):
@@ -8,9 +6,11 @@ def tcp_analysis(packet_list):
     https_sent = 0
     http_sent = 0
     ftp_sent = 0
+    ssh_sent = 0
     https_rcv = 0
     http_rcv = 0
     ftp_rcv = 0
+    ssh_rcv = 0
     
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(TCP):
@@ -20,36 +20,44 @@ def tcp_analysis(packet_list):
             elif ((packet_list[i].dport == 80) or (packet_list[i].dport == 8080)):
                 snt += 1
                 http_sent += 1
-            elif ((packet_list[i].dport == 21)):
+            elif ((packet_list[i].dport == 21) or (packet_list[i].dport == 20)):
                 snt += 1
                 ftp_sent += 1
+            elif ((packet_list[i].dport == 22)):
+                snt += 1
+                ssh_sent += 1
             if ((packet_list[i].sport == 'https') or (packet_list[i].sport == 443)):
                 rcv += 1
                 https_rcv += 1
             elif ((packet_list[i].sport == 80) or (packet_list[i].sport == 8080)):
                 rcv += 1
                 http_rcv += 1
-            elif ((packet_list[i].sport == 21)):
+            elif ((packet_list[i].sport == 21) or (packet_list[i].sport == 20)):
                 rcv += 1
                 ftp_rcv += 1
+            elif ((packet_list[i].sport == 22)):
+                rcv += 1
+                ssh_rcv += 1
 
     if (rcv > snt):
         print('-------------------------------------------------------------------')
-        print('[*] There was %d packets sent!' %snt)
-        print('[*] There was %i packets received!' %rcv)
+        print('[*] There was %i TCP packets sent!' %snt)
+        print('[*] There was %i UDP packets received!' %rcv)
         print('[*] This User is a Mostly Downloader!!!')
         print('-------------------------------------------------------------------')
         print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))
         print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))
         print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))
+        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))
         print('-------------------------------------------------------------------')
     else:
         print('-------------------------------------------------------------------')
-        print('[*] There was %d packets sent!' %snt)
-        print('[*] There was %i packets received!' %rcv)
+        print('[*] There was %i TCP packets sent!' %snt)
+        print('[*] There was %i TCP packets received!' %rcv)
         print('[*] This User is a Mostly Uploader!!!')
         print('-------------------------------------------------------------------')
         print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))
         print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))
         print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))
+        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))
         print('-------------------------------------------------------------------')
