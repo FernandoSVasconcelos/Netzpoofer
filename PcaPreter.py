@@ -13,15 +13,15 @@ def main():
     print('(_)     (_)___(_)(_)   (_)(_)     ( ) ( ) (_)____    (_)   (_)____ ( ) ( ) ')
     print('(_)       (___)  (_)   (_)(_)     (_)  (_)(______)   (_)   (______)(_)  (_)') 
 
-    pcap_filename = input('Pcap Filename: ')
+    pcap_filename = input('Pcap Filename: ')        #Seta o arquivo que será interpretado
     print(pcap_filename)
-    packet_list = rdpcap(pcap_filename)   
+    packet_list = rdpcap(pcap_filename)         #Cria uma lista com o arquivo
 
     print('[*] There is %i packets.' %len(packet_list))
     print('Packet Content: ')
-    print(packet_list)
+    print(packet_list)      #Mostra informações superficiais sobre o arquivo
 
-    while True:
+    while True:         #Looping do menu principal
         print('1 - Especific Packet Content')
         print('2 - All Packet Content')
         print('3 - All TCP Packets')
@@ -34,46 +34,41 @@ def main():
 
         menu = int(input('Selection: '))
         if(menu == 1):
-            espec_packet(packet_list)
-            print('1 - Check more packets')
-            print('2 - Quit')
-            espec_menu = int(input('Selection: '))
-            if(espec_menu == 2):
-                break
+            espec_packet(packet_list)       #Chama a função de pacotes específicos
         elif(menu == 2):
-            full_packet(packet_list)
+            full_packet(packet_list)        #Chama a função de todos os pacotes
         elif(menu == 3):
-            tcp_packet(packet_list)
+            tcp_packet(packet_list)         #Chama a função de todos os pacotes TCP  
         elif(menu == 4):
-            udp_packet(packet_list)
+            udp_packet(packet_list)         #Chama a função de todos os pacotes UDP
         elif(menu == 5):
-            tcp_analysis(packet_list)
+            tcp_analysis(packet_list)       #Chama a função de análise TCP
         elif(menu == 6):
-            ip_analysis(packet_list)
+            ip_analysis(packet_list)        #Chama a função de análise TCP/IP
         elif(menu == 7):
-            udp_analysis(packet_list)
+            udp_analysis(packet_list)       #Chama a função de análise UDP
         elif(menu == 8):
-            uip_analysis(packet_list)
+            uip_analysis(packet_list)       #Chama a função de análise UDP/IP
         else:
             break
     
-def espec_packet(packet_list):
+def espec_packet(packet_list):         #Função de pacotes específicos
     print('Type the number of the packet to analyse')
-    packet_number = int(input('Packet Number: '))
-    packet_list[packet_number].show()
+    packet_number = int(input('Packet Number: '))       #Seta o endereço do pacote específico
+    packet_list[packet_number].show()       #Mostra apenas o pacote específico
 
-def full_packet(packet_list):
+def full_packet(packet_list):       #Função de todos os pacotes
     for i in range(len(packet_list)):
-        packet_list[i].show()
+        packet_list[i].show()       #Mostra todos os pacotes
 
-def tcp_packet(packet_list):
+def tcp_packet(packet_list):        #Função de todos os pacotes TCP
     for i in range(len(packet_list)):
-        if packet_list[i].haslayer(TCP):
-            packet_list[i].show()
+        if packet_list[i].haslayer(TCP):        #Busca apenas os pacotes com cabeçalho TCP
+            packet_list[i].show()       #Mostra apenas os pacotes com cabeçalhos TCP
 
-def udp_packet(packet_list):
+def udp_packet(packet_list):        #Função de todos os pacotes UDP
     for i in range(len(packet_list)):
-        if packet_list[i].haslayer(UDP):
-            packet_list[i].show()
+        if packet_list[i].haslayer(UDP):        #Busca apenas os pacotes com cabeçalho UDP
+            packet_list[i].show()       #Mostra apenas os pacotes com cabeçalho UDP
 
 main()
