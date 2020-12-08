@@ -11,6 +11,11 @@ def tcp_analysis(packet_list):      #Função para análise TCP
     http_rcv = 0
     ftp_rcv = 0
     ssh_rcv = 0
+    bad_tcp = 0
+    
+    for i in range(len(packet_list)):
+        if packet_list[i].haslayer(TCP):        #Conta os pacotes TCP
+            bad_tcp += 1
     
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(TCP):        #Verifica se o pacote tem cabeçalho TCP
@@ -38,6 +43,9 @@ def tcp_analysis(packet_list):      #Função para análise TCP
             elif ((packet_list[i].sport == 22)):        #Verifica se o pacote recebido é SSH
                 rcv += 1
                 ssh_rcv += 1
+
+    print('-------------------------------------------------------------------')
+    print('[*] There was %i non important packets' %(bad_tcp - (snt + rcv)))        #Mostra a quantidade de pacotes TCP irrelevantes
 
     if (rcv > snt):     #Verifica se o alvo do sniffing é um downloader
         print('-------------------------------------------------------------------')

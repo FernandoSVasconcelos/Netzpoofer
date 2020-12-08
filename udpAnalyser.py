@@ -11,6 +11,11 @@ def udp_analysis(packet_list):          #Função de análise UDP
     http_rcv = 0
     ftp_rcv = 0
     ssh_rcv = 0
+    bad_udp = 0
+
+    for i in range(len(packet_list)):
+        if packet_list[i].haslayer(UDP):        #Conta os pacotes UDP
+            bad_udp += 1
     
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(UDP):        #Verifica se o pacote tem cabeçalho UDP
@@ -38,6 +43,8 @@ def udp_analysis(packet_list):          #Função de análise UDP
             elif ((packet_list[i].sport == 22)):        #Verifica se o pacote recebido é SSH
                 rcv += 1
                 ssh_rcv += 1
+    print('-------------------------------------------------------------------')
+    print('[*] There was %i non important packets' %(bad_udp - (snt + rcv)))    #Mostra a quantidade de pacotes UDP irrelevantes
 
     if (rcv > snt):     #Verifica se o alvo do sniffing é um downloader
         print('-------------------------------------------------------------------')
