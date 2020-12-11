@@ -1,6 +1,6 @@
 from scapy.all import *
 
-def udp_analysis(packet_list):          #Função de análise UDP
+def udp_analysis(packet_list):          
     rcv = 0
     snt = 0
     https_sent = 0
@@ -14,57 +14,57 @@ def udp_analysis(packet_list):          #Função de análise UDP
     bad_udp = 0
 
     for i in range(len(packet_list)):
-        if packet_list[i].haslayer(UDP):        #Conta os pacotes UDP
+        if packet_list[i].haslayer(UDP):       
             bad_udp += 1
     
     for i in range(len(packet_list)):
-        if packet_list[i].haslayer(UDP):        #Verifica se o pacote tem cabeçalho UDP
-            if ((packet_list[i].dport == 'https') or (packet_list[i].dport == 443)):        #Verifica se o pacote enviado é HTTPS
+        if packet_list[i].haslayer(UDP):        
+            if ((packet_list[i].dport == 'https') or (packet_list[i].dport == 443)):        
                 snt += 1
                 https_sent += 1
-            elif ((packet_list[i].dport == 80) or (packet_list[i].dport == 8080)):          #Verifica se o pacote enviado é HTTP
+            elif ((packet_list[i].dport == 80) or (packet_list[i].dport == 8080)):         
                 snt += 1
                 http_sent += 1
-            elif ((packet_list[i].dport == 21) or (packet_list[i].dport == 20)):        #Verifica se o pacote enviado é FTP
+            elif ((packet_list[i].dport == 21) or (packet_list[i].dport == 20)):      
                 snt += 1
                 ftp_sent += 1
-            elif ((packet_list[i].dport == 22)):        #Verifica se o pacote enviado é SSH
+            elif ((packet_list[i].dport == 22)):       
                 snt += 1
                 ssh_sent += 1
-            if ((packet_list[i].sport == 'https') or (packet_list[i].sport == 443)):        #Verifica se o pacote recebido é HTTPS
+            if ((packet_list[i].sport == 'https') or (packet_list[i].sport == 443)):       
                 rcv += 1
                 https_rcv += 1
-            elif ((packet_list[i].sport == 80) or (packet_list[i].sport == 8080)):      #Verifica se o pacote recebido é HTTP
+            elif ((packet_list[i].sport == 80) or (packet_list[i].sport == 8080)):      
                 rcv += 1
                 http_rcv += 1
-            elif ((packet_list[i].sport == 21) or (packet_list[i].sport == 20)):        #Verifica se o pacote recebido é FTP
+            elif ((packet_list[i].sport == 21) or (packet_list[i].sport == 20)):       
                 rcv += 1
                 ftp_rcv += 1
-            elif ((packet_list[i].sport == 22)):        #Verifica se o pacote recebido é SSH
+            elif ((packet_list[i].sport == 22)):       
                 rcv += 1
                 ssh_rcv += 1
     print('-------------------------------------------------------------------')
-    print('[*] There was %i non important packets' %(bad_udp - (snt + rcv)))    #Mostra a quantidade de pacotes UDP irrelevantes
+    print('[*] There was %i non important packets' %(bad_udp - (snt + rcv)))   
 
-    if (rcv > snt):     #Verifica se o alvo do sniffing é um downloader
+    if (rcv > snt):    
         print('-------------------------------------------------------------------')
-        print('[*] There was %i UDP packets sent!' %snt)        #Mostra a quantidade de pacotes UDP enviados
-        print('[*] There was %i UDP packets received!' %rcv)        #Mostra a quantidade de pacotes UDP recebidos
+        print('[*] There was %i UDP packets sent!' %snt)        
+        print('[*] There was %i UDP packets received!' %rcv)       
         print('[*] This User is a Mostly Downloader!!!')
         print('-------------------------------------------------------------------')
-        print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))       #Mostra a quantidade de pacotes HTTPS enviados e recebidos
-        print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))      #Mostra a quantidade de pacotes HTTP enviados e recebidos
-        print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))     #Mostra a quantidade de pacotes FTP enviados e recebidos
-        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))     #Mostra a quantidade de pacotes SSH enviados e recebidos
+        print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))       
+        print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))     
+        print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))     
+        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))    
         print('-------------------------------------------------------------------')
-    else:       #Verifica se o alvo do sniffing é um uploader
+    else:      
         print('-------------------------------------------------------------------')
-        print('[*] There was %i UDP packets sent!' %snt)        #Mostra a quantidade de pacotes UDP enviados
-        print('[*] There was %i UDP packets received!' %rcv)        #Mostra a quantidade de pacotes UDP recebidos
+        print('[*] There was %i UDP packets sent!' %snt)        
+        print('[*] There was %i UDP packets received!' %rcv)       
         print('[*] This User is a Mostly Uploader!!!')
         print('-------------------------------------------------------------------')
-        print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))       #Mostra a quantidade de pacotes HTTPS enviados e recebidos
-        print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))      #Mostra a quantidade de pacotes HTTP enviados e recebidos
-        print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))     #Mostra a quantidade de pacotes FTP enviados e recebidos
-        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))     #Mostra a quantidade de pacotes SSH enviados e recebidos
+        print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))    
+        print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))     
+        print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))     
+        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))    
         print('-------------------------------------------------------------------')
