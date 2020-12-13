@@ -5,7 +5,7 @@ from ipAnalyser import ip_analysis
 from udpAnalyser import udp_analysis
 from uipAnalyser import uip_analysis
 
-def main():
+def pcapreter():
     print(' _____     ___     _____   _____   _____   ______  _______  ______  _____  ')
     print('(_____)  _(___)_  (_____) (_____) (_____) (______)(__ _ __)(______)(_____)   ')
     print('(_)__(_)(_)   (_)(_)___(_)(_)__(_)(_)__(_)(_)__      (_)   (_)__   (_)__(_)')
@@ -70,5 +70,3 @@ def udp_packet(packet_list):
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(UDP):        
             packet_list[i].show()       
-
-main()
