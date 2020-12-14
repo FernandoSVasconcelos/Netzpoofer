@@ -2,8 +2,14 @@ from scapy.all import *
 
 def ip_analysis(packet_list):      
     connection_src = []    
-    connection_dst = []     
-    target_ip = input('Type the target IP for a better analysis: ')     
+    connection_dst = []
+    print('-------------------------------------------------------------------')
+    print('Exclude target IP from the analysis?')
+    tg = input('[Y/N]')
+    if(tg == 'Y'):
+        target_ip = input('Type the target IP for a better analysis: ')
+    else:
+        target_ip = '192.168.0.101' 
     mostly_updloader = []      
 
     for i in range(len(packet_list)):

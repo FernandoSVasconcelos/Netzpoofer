@@ -3,14 +3,14 @@ from PcaPreter import pcapreter
 from Netzpoofer import netzpoofer
 
 def main():
-    print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
-    print('[*]                                                                  [*]')
-    print('[*] Ferramenta para auxílio em perícia forense e análise de tráfego  [*]')
-    print('[*] Criado por: Fernando de Souza Vasconcelos                        [*]')
-    print('[*] Versão: 1.0.0                                                    [*]')
-    print('[*] Github: @Default37                                               [*]')
-    print('[*]                                                                  [*]')
-    print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
+    print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
+    print('[*]                                                                           [*]')
+    print('[*] Ferramenta para auxílio em perícia forense e análise de tráfego em redes  [*]')
+    print('[*] Criado por: Fernando de Souza Vasconcelos                                 [*]')
+    print('[*] Versão: 1.0.0                                                             [*]')
+    print('[*] Github: @Default37                                                        [*]')
+    print('[*]                                                                           [*]')
+    print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
     print('')
     menu()
     

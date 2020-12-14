@@ -4,6 +4,7 @@ from tcpAnalyser import tcp_analysis
 from ipAnalyser import ip_analysis
 from udpAnalyser import udp_analysis
 from uipAnalyser import uip_analysis
+import os
 
 def pcapreter():
     print(' _____     ___     _____   _____   _____   ______  _______  ______  _____  ')
@@ -13,9 +14,13 @@ def pcapreter():
     print('(_)     (_)___(_)(_)   (_)(_)     ( ) ( ) (_)____    (_)   (_)____ ( ) ( ) ')
     print('(_)       (___)  (_)   (_)(_)     (_)  (_)(______)   (_)   (______)(_)  (_)') 
 
+    print('')
+    print('[*] All pcap files: ')
+    os.system("ls ./Files/")
+    print('-------------------------------------------------------------------')
     pcap_filename = input('Pcap Filename: ')        
     print(pcap_filename)
-    packet_list = rdpcap(pcap_filename)         
+    packet_list = rdpcap("Files/" + pcap_filename)         
 
     print('[*] There is %i packets.' %len(packet_list))
     print('Packet Content: ')
