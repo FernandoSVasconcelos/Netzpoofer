@@ -7,6 +7,7 @@ def main():
     print('[*]                                                                           [*]')
     print('[*] Ferramenta para auxílio em perícia forense e análise de tráfego em redes  [*]')
     print('[*] Criado por: Fernando de Souza Vasconcelos                                 [*]')
+    print('[*] Orientador: Douglas Fabiano de Sousa Nunes                                [*]')
     print('[*] Versão: 1.0.0                                                             [*]')
     print('[*] Github: @Default37                                                        [*]')
     print('[*]                                                                           [*]')

