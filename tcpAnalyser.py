@@ -1,6 +1,7 @@
 from scapy.all import *
 
 def tcp_analysis(packet_list):    
+    os.system("clear")
     rcv = 0
     snt = 0
     https_sent = 0

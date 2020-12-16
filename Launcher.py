@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from PcaPreter import pcapreter
 from Netzpoofer import netzpoofer
+import os
 
 def main():
+    os.system("clear")
     print('[*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*][*]')
     print('[*]                                                                           [*]')
     print('[*] Ferramenta para auxílio em perícia forense e análise de tráfego em redes  [*]')

@@ -45,6 +45,7 @@ def poison_target(gateway_ip, gateway_mac, target_ip, target_mac):
         return
 
 def netzpoofer():
+    os.system("clear")
     print(' _     _         _                                 ____             ')
     print('(_)   (_)  ____ (_)_  _____                       (____) ____  _    ')
     print('(__)_ (_) (____)(___)(_____) ____    ___    ___  (_)__  (____)(_)__ ')
@@ -71,23 +72,23 @@ def netzpoofer():
     print('-------------------------------------------------------------------')
     interface = input('[?] Network Interface: ')
     if(interface == '?'):
-        print('[*] Your network device is the device you use to connect to the network')
-        print('[*] If you are connected with a ethernet cable, then your interface is eth0')
-        print('[*] If you are connected with wireless, the your interface is wlan0')
+        print('[*] Your network device is the hardware used to connect to the network')
+        print('[*] If you have a ethernet cable connection, then your interface is eth0')
+        print('[*] If you have a wireless connection, then your interface is wlan0')
         interface = input('Network Interface: ')
 
-    print('[*] All the possible networks: ')
-    os.system("sudo ifconfig | grep inet")
+    print('[*] Your IP address ')
+    os.system("ip -br address | grep " + interface)
     print('-------------------------------------------------------------------')
-    net = input('[?] Network IP: ')
+    net = input('[?] Network address(Different then your IP address): ')
     if(net == '?'):
-        print('[*] Your network address defines what network are you connected')
-        print('[*] If your IP is 192.168.0.101 and mask 255.255.255.0 ')
-        print('[*] The your network IP is 192.168.0.0')
+        print('[*] Your network address defines what network you are connected')
+        print('[*] If your IP is 192.168.0.101 and your mask is 255.255.255.0 ')
+        print('[*] Then your network address is 192.168.0.0')
         net = input('Network IP: ')
 
     print('[*] All the possible targets in your network: ')
-    os.system("nmap -sn "+ net +'/24'" | grep for")
+    os.system("nmap -sn " + net + '/24'" | grep for | cut -f 5 -d ' '")
     print('-------------------------------------------------------------------')
     target_ip = input('[?] Target IP: ')
     if(target_ip == '?'):
@@ -98,11 +99,12 @@ def netzpoofer():
 
     print('[*] Possible gateway in your network: ')
     os.system("route -n")
+    print('-------------------------------------------------------------------')
     gateway_ip = input('[?] Gateway IP: ')
     if(gateway_ip == '?'):
-        print('[*] The gateway literally the gate between you and the internet')
-        print('[*] In a simple network, this should be the routers IP')
-        print('[*] If your IP is 192.168.0.101, the your gateway is probably 192.168.0.1')
+        print('[*] The gateway is literally the gate between you and the internet')
+        print('[*] In a simple network this should be the routers IP')
+        print('[*] If your IP is 192.168.0.101 then your gateway is probably 192.168.0.1')
         gateway_ip = input('Gateway IP: ')
 
     print('[*] Save intercepted packets in a .pcap file?')
@@ -112,6 +114,7 @@ def netzpoofer():
         output_filename = input('Output Filename: ')
         limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename)
     else:
+        os.system("clear")
         constant_sniff(interface, gateway_ip, target_ip)
 
 def limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename):

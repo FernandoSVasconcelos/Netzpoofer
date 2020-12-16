@@ -1,6 +1,8 @@
 from scapy.all import *
+import os
 
-def udp_analysis(packet_list):          
+def udp_analysis(packet_list):    
+    os.system("clear")      
     rcv = 0
     snt = 0
     https_sent = 0

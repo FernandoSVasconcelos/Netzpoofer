@@ -7,6 +7,7 @@ from uipAnalyser import uip_analysis
 import os
 
 def pcapreter():
+    os.system("clear")
     print(' _____     ___     _____   _____   _____   ______  _______  ______  _____  ')
     print('(_____)  _(___)_  (_____) (_____) (_____) (______)(__ _ __)(______)(_____)   ')
     print('(_)__(_)(_)   (_)(_)___(_)(_)__(_)(_)__(_)(_)__      (_)   (_)__   (_)__(_)')
@@ -19,6 +20,7 @@ def pcapreter():
     os.system("ls ./Files/")
     print('-------------------------------------------------------------------')
     pcap_filename = input('Pcap Filename: ')        
+    os.system("clear")
     print(pcap_filename)
     packet_list = rdpcap("Files/" + pcap_filename)         
 
@@ -57,21 +59,33 @@ def pcapreter():
         else:
             break
     
-def espec_packet(packet_list):         
+def espec_packet(packet_list):
+    os.system("clear")     
     print('Type the number of the packet to analyse')
     packet_number = int(input('Packet Number: '))       
     packet_list[packet_number].show()      
 
-def full_packet(packet_list):     
+def full_packet(packet_list):   
+    os.system("clear")  
     for i in range(len(packet_list)):
         packet_list[i].show()      
 
-def tcp_packet(packet_list):        
+def tcp_packet(packet_list):    
+    os.system("clear")    
+    flag = 0
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(TCP):        
-            packet_list[i].show()      
+            packet_list[i].show()   
+            flag += 1
+    if(flag == 0):
+        print("There was 0 TCP packets")   
 
-def udp_packet(packet_list):        
+def udp_packet(packet_list):  
+    os.system("clear")    
+    flag = 0  
     for i in range(len(packet_list)):
         if packet_list[i].haslayer(UDP):        
-            packet_list[i].show()       
+            packet_list[i].show()  
+            flag += 1
+    if(flag == 0):
+        print("There was 0 UDP packets")     

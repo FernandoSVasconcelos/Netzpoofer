@@ -1,6 +1,8 @@
 from scapy.all import *
+import os
 
-def ip_analysis(packet_list):      
+def ip_analysis(packet_list):    
+    os.system("clear")  
     connection_src = []    
     connection_dst = []
     print('-------------------------------------------------------------------')
