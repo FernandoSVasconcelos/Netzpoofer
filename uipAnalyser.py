@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from scapy.all import *
 import os
 
@@ -6,10 +7,10 @@ def uip_analysis(packet_list):
     connection_src = []     
     connection_dst = []     
     print('-------------------------------------------------------------------')
-    print('Exclude target IP from the analysis?')
+    print('Excluir o endereço IP do alvo da análise?')
     tg = input('[Y/N]')
     if(tg == 'Y'):
-        target_ip = input('Type the target IP for a better analysis: ')
+        target_ip = input('Digite o IP do alvo: ')
     else:
         target_ip = '192.168.0.101'   
     mostly_updloader = []       
@@ -23,22 +24,22 @@ def uip_analysis(packet_list):
     try:
         connection_src.remove(target_ip)        
     except:
-        print('[*] %s is not on the source list' %target_ip)       
+        print('[*] %s não está na lista de IPs fonte de pacote' %target_ip)       
     try:
         connection_dst.remove(target_ip)        
     except:
-        print('[*] %s is not on the destination list' %target_ip)       
+        print('[*] %s não está na lista de IPs destino de pacote' %target_ip)       
     x = len(connection_dst)    
     y = len(connection_src)    
 
     print('-------------------------------------------------------------------')
-    print('[*] There are %i source IP!!!' %y)       
+    print('[*] Há %i IPs fonte!!!' %y)       
     print(connection_src)     
     print('-------------------------------------------------------------------')
-    print('[*] There are %i destination IP!!!' %x)      
+    print('[*] Há %i IPs destino!!!' %x)      
     print(connection_dst)     
     print('-------------------------------------------------------------------')
-    print('[*] Upload/Download analysis')
+    print('[*] Análise de Upload/Download')
 
     connection_array = connection_dst      
     for i in range(y):
@@ -55,12 +56,12 @@ def uip_analysis(packet_list):
                 elif packet_list[j][IP].dst == connection_array[i]:    
                     flagdst += 1
         print('-------------------------------------------------------------------')
-        print('[*] The IP %s uploaded %i and downloaded %i packets!!!' %(connection_array[i], flagsrc, flagdst))  
+        print('[*] O IP %s upou %i e baixou %i pacotes o IP %s!!!' %(target_ip, flagsrc, flagdst, connection_array[i]))  
         if(flagsrc > flagdst):     
             mostly_updloader.append(connection_array[i])      
 
     print('-------------------------------------------------------------------')
-    print('[*] There are %i IP that upload more than download!!!' %len(mostly_updloader))      
+    print('[*] Há %i IPs quem uparam mais do que baixaram!!!' %len(mostly_updloader))      
     for i in range(len(mostly_updloader)):
         print('=> %s' %mostly_updloader[i])    
     print('-------------------------------------------------------------------') 

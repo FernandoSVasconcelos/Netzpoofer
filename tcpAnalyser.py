@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from scapy.all import *
 
 def tcp_analysis(packet_list):    
@@ -46,27 +47,27 @@ def tcp_analysis(packet_list):
                 ssh_rcv += 1
 
     print('-------------------------------------------------------------------')
-    print('[*] There was %i non important packets' %(bad_tcp - (snt + rcv)))     
+    print('[*] Existem %i pacotes não importantes' %(bad_tcp - (snt + rcv)))     
 
     if (rcv > snt):    
         print('-------------------------------------------------------------------')
-        print('[*] There was %i TCP packets sent!' %snt)        
-        print('[*] There was %i TCP packets received!' %rcv)       
-        print('[*] This User is a Mostly Downloader!!!')
+        print('[*] Foram enviados %i pacotes UDP!' %snt)        
+        print('[*] Foram recebidos %i pacotes UDP!' %rcv)       
+        print('[*] Esse IP é um Downloader!!!')
         print('-------------------------------------------------------------------')
-        print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))   
-        print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))     
-        print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))        
-        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))     
+        print('[*] Foram enviados %i pacotes https e foram recebidos %i' %(https_sent, https_rcv))       
+        print('[*] Foram enviados %i pacotes http e foram recebidos %i' %(http_sent, http_rcv))     
+        print('[*] Foram enviados %i pacotes ftp e foram recebidos %i' %(ftp_sent, ftp_rcv))     
+        print('[*] Foram enviados %i pacotes ssh e foram recebidos %i' %(ssh_sent, ssh_rcv))    
         print('-------------------------------------------------------------------')
     else:      
         print('-------------------------------------------------------------------')
-        print('[*] There was %i TCP packets sent!' %snt)        
-        print('[*] There was %i TCP packets received!' %rcv)      
-        print('[*] This User is a Mostly Uploader!!!')
+        print('[*] Foram enviados %i pacotes UDP!' %snt)        
+        print('[*] Foram recebidos %i pacotes UDP!' %rcv)       
+        print('[*] Esse IP é um Uploader!!!')
         print('-------------------------------------------------------------------')
-        print('[*] There was %i https packets sent and %i received' %(https_sent, https_rcv))   
-        print('[*] There was %i http packets sent and %i received' %(http_sent, http_rcv))        
-        print('[*] There was %i ftp packets sent and %i received' %(ftp_sent, ftp_rcv))      
-        print('[*] There was %i ssh packets sent and %i received' %(ssh_sent, ssh_rcv))        
+        print('[*] Foram enviados %i pacotes https e foram recebidos %i' %(https_sent, https_rcv))       
+        print('[*] Foram enviados %i pacotes http e foram recebidos %i' %(http_sent, http_rcv))     
+        print('[*] Foram enviados %i pacotes ftp e foram recebidos %i' %(ftp_sent, ftp_rcv))     
+        print('[*] Foram enviados %i pacotes ssh e foram recebidos %i' %(ssh_sent, ssh_rcv))    
         print('-------------------------------------------------------------------')

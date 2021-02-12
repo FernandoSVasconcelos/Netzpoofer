@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from scapy.all import rdpcap
 from scapy.all import *
 from tcpAnalyser import tcp_analysis
@@ -16,30 +17,30 @@ def pcapreter():
     print('(_)       (___)  (_)   (_)(_)     (_)  (_)(______)   (_)   (______)(_)  (_)') 
 
     print('')
-    print('[*] All pcap files: ')
+    print('[*] Todos os arquivos pcap: ')
     os.system("ls ./Files/")
     print('-------------------------------------------------------------------')
-    pcap_filename = input('Pcap Filename: ')        
+    pcap_filename = input('Nome do arquivo pcap: ')        
     os.system("clear")
     print(pcap_filename)
     packet_list = rdpcap("Files/" + pcap_filename)         
 
-    print('[*] There is %i packets.' %len(packet_list))
+    print('[*] Há %i pacotes.' %len(packet_list))
     print('Packet Content: ')
     print(packet_list)      
 
     while True:         
-        print('1 - Especific Packet Content')
-        print('2 - All Packet Content')
-        print('3 - All TCP Packets')
-        print('4 - All UDP Packets')
-        print('5 - TCP Analysis')
-        print('6 - TCP/IP Analysis')
-        print('7 - UDP Analysis')
-        print('8 - UDP/IP Analysis')
-        print('0 - Break')
+        print('1 - Conteúdo de um pacote específico')
+        print('2 - Conteúdo de todos os pacotes')
+        print('3 - Todos os pacotes TCP')
+        print('4 - Todos os pacotes UDP')
+        print('5 - Análise TCP')
+        print('6 - Análise TCP/IP')
+        print('7 - Análise UDP')
+        print('8 - Análise UDP/IP')
+        print('0 - Sair')
 
-        menu = int(input('Selection: '))
+        menu = int(input('Selecione: '))
         if(menu == 1):
             espec_packet(packet_list)       
         elif(menu == 2):
@@ -61,8 +62,8 @@ def pcapreter():
     
 def espec_packet(packet_list):
     os.system("clear")     
-    print('Type the number of the packet to analyse')
-    packet_number = int(input('Packet Number: '))       
+    print('Digite o número do pacote que deseja analisar')
+    packet_number = int(input('Número do pacote: '))       
     packet_list[packet_number].show()      
 
 def full_packet(packet_list):   
@@ -78,7 +79,7 @@ def tcp_packet(packet_list):
             packet_list[i].show()   
             flag += 1
     if(flag == 0):
-        print("There was 0 TCP packets")   
+        print("Há 0 pacotes TCP")   
 
 def udp_packet(packet_list):  
     os.system("clear")    
@@ -88,4 +89,4 @@ def udp_packet(packet_list):
             packet_list[i].show()  
             flag += 1
     if(flag == 0):
-        print("There was 0 UDP packets")     
+        print("Há 0 pacotes UDP")     
