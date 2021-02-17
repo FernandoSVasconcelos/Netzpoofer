@@ -5,6 +5,8 @@ from tcpAnalyser import tcp_analysis
 from ipAnalyser import ip_analysis
 from udpAnalyser import udp_analysis
 from uipAnalyser import uip_analysis
+from MultiUAnalyser import multiU_analysis
+from MultiTAnalyser import multiT_analysis
 import os
 
 def pcapreter():
@@ -38,6 +40,8 @@ def pcapreter():
         print('6 - Análise TCP/IP')
         print('7 - Análise UDP')
         print('8 - Análise UDP/IP')
+        print('9 - Análise UDP de multiplos IPs')
+        print('10 - Análise TCP de multiplos IPs')
         print('0 - Sair')
 
         menu = int(input('Selecione: '))
@@ -56,7 +60,11 @@ def pcapreter():
         elif(menu == 7):
             udp_analysis(packet_list)       
         elif(menu == 8):
-            uip_analysis(packet_list)      
+            uip_analysis(packet_list)    
+        elif(menu == 9):
+            multiU_analysis(packet_list)  
+        elif(menu == 10):
+            multiT_analysis(packet_list)
         else:
             break
     

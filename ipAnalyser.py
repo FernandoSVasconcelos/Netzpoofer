@@ -6,29 +6,16 @@ def ip_analysis(packet_list):
     os.system("clear")  
     connection_src = []    
     connection_dst = []
-    print('-------------------------------------------------------------------')
-    print('Excluir o IP do alvo da análise?')
-    tg = input('[Y/N]')
-    if(tg == 'Y'):
-        target_ip = input('Digite o IP do alvo: ')
-    else:
-        target_ip = '192.168.0.101' 
+    print('-------------------------------------------------------------------') 
     mostly_updloader = []      
 
     for i in range(len(packet_list)):
-        if packet_list[i].haslayer(TCP):       
-            connection_src.append(packet_list[i][IP].src)      
-            connection_dst.append(packet_list[i][IP].dst)      
+        if packet_list[i].haslayer(TCP):   
+            if packet_list[i].haslayer(IP):    
+                connection_src.append(packet_list[i][IP].src)      
+                connection_dst.append(packet_list[i][IP].dst)      
     connection_src = list(dict.fromkeys(connection_src))        
-    connection_dst = list(dict.fromkeys(connection_dst))        
-    try:
-        connection_src.remove(target_ip)       
-    except:
-        print('[*] %s não está na lista de IPs fonte de pacote' %target_ip)    
-    try:
-        connection_dst.remove(target_ip)      
-    except:
-        print('[*] %s não está na lista de IPs destino de pacote' %target_ip)       
+    connection_dst = list(dict.fromkeys(connection_dst))              
     x = len(connection_dst)     
     y = len(connection_src)    
 
@@ -50,18 +37,26 @@ def ip_analysis(packet_list):
         flagsrc = 0
         flagdst = 0
         for j in range(len(packet_list)):
-            if packet_list[j].haslayer(TCP):        
-                if packet_list[j][IP].src == connection_array[i]:      
-                    flagsrc += 1
-                elif packet_list[j][IP].dst == connection_array[i]:   
-                    flagdst += 1
+            if packet_list[j].haslayer(TCP):    
+                if packet_list[j].haslayer(IP):    
+                    if packet_list[j][IP].src == connection_array[i]:      
+                        flagsrc += 1
+                    elif packet_list[j][IP].dst == connection_array[i]:   
+                        flagdst += 1
         print('-------------------------------------------------------------------')
-        print('[*] O IP %s upou %i e baixou %i pacotes do IP %s!!!' %(target_ip, flagsrc, flagdst, connection_array[i]))   
+        print('[*] Os IPs interceptados enviaram %i e receberam %i pacotes do IP %s!!!' %(flagsrc, flagdst, connection_array[i]))   
         if(flagsrc > flagdst):     
             mostly_updloader.append(connection_array[i])     
 
     print('-------------------------------------------------------------------')
-    print('[*] Há %i IPs que uparam mais do que baixaram!!!' %len(mostly_updloader))     
-    for i in range(len(mostly_updloader)):
-        print('=> %s' %mostly_updloader[i])         
-    print('-------------------------------------------------------------------') 
+    mostly_updloader = list(dict.fromkeys(mostly_updloader))
+    if(len(mostly_updloader) > 1):
+        print('[*] Há %i IPs que enviaram mais do que receberam!!!' %len(mostly_updloader))      
+        for i in range(len(mostly_updloader)):
+            print('=> %s' %mostly_updloader[i])    
+        print('-------------------------------------------------------------------') 
+    else:
+        print('[*] Há %i IP que enviou mais do que recebeu!!!' %len(mostly_updloader))      
+        for i in range(len(mostly_updloader)):
+            print('=> %s' %mostly_updloader[i])    
+        print('-------------------------------------------------------------------')
